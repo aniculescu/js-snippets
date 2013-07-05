@@ -1,22 +1,33 @@
 /*
     A js function to mimic the jquery $.extend.
-    Merge two objects with infinite depth.
+    Merge two or more objects with infinite depth.
     
-    @param source - the source object
-    @param destination - the object to merge source into
-    
-    TODO: a more elegant(useful) next step is to keep the destination object within the function
-    and allow 2 or more objects to be passed in for merging; then return the resulting object.
+    @return - the object containing the merged data of all objects passed in.
     
 */
-var objMerge = function (source, destination){
-   for(k in source){
-      if(source.hasOwnProperty(k)){
-        if(typeof source[k] !== 'object'){
-            destination[k]=source[k];
-        } else {
-            objMerge(source[k], destination[k]||{});
+var objMerge = function (){
+    var destination = {};
+    var a = 0;
+    var args = arguments;
+    var argsLen = arguments.length;
+    if(argsLen < 2) return false;
+    
+    for(;a < argsLen; a++){
+        var source = args[a];
+        if(typeof source === "undefined") return false;
+        for(k in source){
+            if(source.hasOwnProperty(k)){
+                if(typeof source[k] !== 'object'){
+                    destination[k] = source[k];
+                } else {
+                    destination[k] = objMerge(source[k], destination[k]||{});
+                }
+            }
         }
-      }
-   }
-}
+     
+    }
+    return destination;
+};
+
+
+
